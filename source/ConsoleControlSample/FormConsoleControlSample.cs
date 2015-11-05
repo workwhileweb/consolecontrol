@@ -1,21 +1,16 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
+using System.IO;
 using System.Windows.Forms;
 
 namespace ConsoleControlSample
 {
     /// <summary>
-    /// The sample form.
+    ///     The sample form.
     /// </summary>
     public partial class FormConsoleControlSample : Form
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="FormConsoleControlSample"/> class.
+        ///     Initializes a new instance of the <see cref="FormConsoleControlSample" /> class.
         /// </summary>
         public FormConsoleControlSample()
         {
@@ -23,10 +18,10 @@ namespace ConsoleControlSample
         }
 
         /// <summary>
-        /// Handles the Load event of the FormConsoleControlSample control.
+        ///     Handles the Load event of the FormConsoleControlSample control.
         /// </summary>
         /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
+        /// <param name="e">The <see cref="System.EventArgs" /> instance containing the event data.</param>
         private void FormConsoleControlSample_Load(object sender, EventArgs e)
         {
             //  Update the UI state.
@@ -34,14 +29,14 @@ namespace ConsoleControlSample
         }
 
         /// <summary>
-        /// Handles the Click event of the toolStripButtonNewProcess control.
+        ///     Handles the Click event of the toolStripButtonNewProcess control.
         /// </summary>
         /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
+        /// <param name="e">The <see cref="System.EventArgs" /> instance containing the event data.</param>
         private void toolStripButtonNewProcess_Click(object sender, EventArgs e)
         {
             //  Create the new process form.
-            FormNewProcess formNewProcess = new FormNewProcess();
+            var formNewProcess = new FormNewProcess();
 
             //  If the form is shown OK, start the process.
             if (formNewProcess.ShowDialog() == DialogResult.OK)
@@ -55,10 +50,10 @@ namespace ConsoleControlSample
         }
 
         /// <summary>
-        /// Handles the Click event of the toolStripButtonStopProcess control.
+        ///     Handles the Click event of the toolStripButtonStopProcess control.
         /// </summary>
         /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
+        /// <param name="e">The <see cref="System.EventArgs" /> instance containing the event data.</param>
         private void toolStripButtonStopProcess_Click(object sender, EventArgs e)
         {
             consoleControl.StopProcess();
@@ -68,13 +63,14 @@ namespace ConsoleControlSample
         }
 
         /// <summary>
-        /// Updates the state of the UI.
+        ///     Updates the state of the UI.
         /// </summary>
         private void UpdateUiState()
         {
             //  Update the state.
             if (consoleControl.IsProcessRunning)
-                toolStripStatusLabelConsoleState.Text = "Running " + System.IO.Path.GetFileName(consoleControl.ProcessInterface.ProcessFileName);
+                toolStripStatusLabelConsoleState.Text = "Running " +
+                                                        Path.GetFileName(consoleControl.ProcessInterface.ProcessFileName);
             else
                 toolStripStatusLabelConsoleState.Text = "Not Running";
 
@@ -88,10 +84,10 @@ namespace ConsoleControlSample
         }
 
         /// <summary>
-        /// Handles the Click event of the toolStripButtonShowDiagnostics control.
+        ///     Handles the Click event of the toolStripButtonShowDiagnostics control.
         /// </summary>
         /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
+        /// <param name="e">The <see cref="System.EventArgs" /> instance containing the event data.</param>
         private void toolStripButtonShowDiagnostics_Click(object sender, EventArgs e)
         {
             consoleControl.ShowDiagnostics = !consoleControl.ShowDiagnostics;
@@ -99,20 +95,20 @@ namespace ConsoleControlSample
         }
 
         /// <summary>
-        /// Handles the Tick event of the timerUpdateUI control.
+        ///     Handles the Tick event of the timerUpdateUI control.
         /// </summary>
         /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
+        /// <param name="e">The <see cref="System.EventArgs" /> instance containing the event data.</param>
         private void timerUpdateUI_Tick(object sender, EventArgs e)
         {
             UpdateUiState();
         }
 
         /// <summary>
-        /// Handles the Click event of the toolStripButtonInputEnabled control.
+        ///     Handles the Click event of the toolStripButtonInputEnabled control.
         /// </summary>
         /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
+        /// <param name="e">The <see cref="System.EventArgs" /> instance containing the event data.</param>
         private void toolStripButtonInputEnabled_Click(object sender, EventArgs e)
         {
             consoleControl.IsInputEnabled = !consoleControl.IsInputEnabled;
@@ -120,10 +116,10 @@ namespace ConsoleControlSample
         }
 
         /// <summary>
-        /// Handles the Click event of the toolStripButtonRunCMD control.
+        ///     Handles the Click event of the toolStripButtonRunCMD control.
         /// </summary>
         /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
+        /// <param name="e">The <see cref="System.EventArgs" /> instance containing the event data.</param>
         private void toolStripButtonRunCMD_Click(object sender, EventArgs e)
         {
             consoleControl.StartProcess("cmd", null);
@@ -131,10 +127,10 @@ namespace ConsoleControlSample
         }
 
         /// <summary>
-        /// Handles the Click event of the toolStripButtonSendKeyboardCommandsToProcess control.
+        ///     Handles the Click event of the toolStripButtonSendKeyboardCommandsToProcess control.
         /// </summary>
         /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
+        /// <param name="e">The <see cref="System.EventArgs" /> instance containing the event data.</param>
         private void toolStripButtonSendKeyboardCommandsToProcess_Click(object sender, EventArgs e)
         {
             consoleControl.SendKeyboardCommandsToProcess = !consoleControl.SendKeyboardCommandsToProcess;
@@ -142,10 +138,10 @@ namespace ConsoleControlSample
         }
 
         /// <summary>
-        /// Handles the Click event of the toolStripButtonClearOutput control.
+        ///     Handles the Click event of the toolStripButtonClearOutput control.
         /// </summary>
         /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
+        /// <param name="e">The <see cref="System.EventArgs" /> instance containing the event data.</param>
         private void toolStripButtonClearOutput_Click(object sender, EventArgs e)
         {
             consoleControl.ClearOutput();

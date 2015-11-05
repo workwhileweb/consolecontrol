@@ -114,10 +114,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ConsoleControlAPI\ConsoleControlAPI.csproj">
-      <Project>{a4b8573f-ebfc-4140-b8aa-7c037919ef57}</Project>
-      <Name>ConsoleControlAPI</Name>
-    </ProjectReference>
     <ProjectReference Include="..\ConsoleControl\ConsoleControl.csproj">
       <Project>{737CC7F2-EC7C-4800-B7EB-72637E892C42}</Project>
       <Name>ConsoleControl</Name>

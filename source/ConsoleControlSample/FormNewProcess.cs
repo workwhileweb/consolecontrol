@@ -28,17 +28,11 @@ namespace ConsoleControlSample
     /// <value>
     /// The name of the file.
     /// </value>
-    public string FileName
-    {
-      get { return textBoxFileName.Text; }
-    }
+    public string FileName => textBoxFileName.Text;
 
-    /// <summary>
+      /// <summary>
     /// Gets the arguments.
     /// </summary>
-    public string Arguments
-    {
-      get { return textBoxArguments.Text; }
-    }
+    public string Arguments => textBoxArguments.Text;
   }
 }

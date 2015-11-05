@@ -42,10 +42,10 @@ namespace ConsoleControl
             InitialiseKeyMappings();
 
             //  Handle process events.
-            processInterace.OnProcessOutput += processInterace_OnProcessOutput;
-            processInterace.OnProcessError += processInterace_OnProcessError;
-            processInterace.OnProcessInput += processInterace_OnProcessInput;
-            processInterace.OnProcessExit += processInterace_OnProcessExit;
+            _processInterace.OnProcessOutput += processInterace_OnProcessOutput;
+            _processInterace.OnProcessError += processInterace_OnProcessError;
+            _processInterace.OnProcessInput += processInterace_OnProcessInput;
+            _processInterace.OnProcessExit += processInterace_OnProcessExit;
 
             //  Wait for key down messages on the rich text box.
             richTextBoxConsole.KeyDown += richTextBoxConsole_KeyDown;
@@ -99,10 +99,10 @@ namespace ConsoleControl
             //  Are we showing diagnostics?
             if (ShowDiagnostics)
             {
-                WriteOutput(Environment.NewLine + processInterace.ProcessFileName + " exited.", Color.FromArgb(255, 0, 255, 0));
+                WriteOutput(Environment.NewLine + _processInterace.ProcessFileName + " exited.", Color.FromArgb(255, 0, 255, 0));
             }
             
-            if (!this.IsHandleCreated)
+            if (!IsHandleCreated)
                 return;
             //  Read only again.
             Invoke((Action)(() =>
@@ -117,10 +117,10 @@ namespace ConsoleControl
         private void InitialiseKeyMappings()
         {
             //  Map 'tab'.
-            keyMappings.Add(new KeyMapping(false, false, false, Keys.Tab, "{TAB}", "\t"));
+            _keyMappings.Add(new KeyMapping(false, false, false, Keys.Tab, "{TAB}", "\t"));
 
             //  Map 'Ctrl-C'.
-            keyMappings.Add(new KeyMapping(true, false, false, Keys.C, "^(c)", "\x03\r\n"));
+            _keyMappings.Add(new KeyMapping(true, false, false, Keys.C, "^(c)", "\x03\r\n"));
         }
 
         /// <summary>
@@ -134,7 +134,7 @@ namespace ConsoleControl
             if (SendKeyboardCommandsToProcess && IsProcessRunning)
             {
                 //  Get key mappings for this key event?
-                var mappings = from k in keyMappings
+                var mappings = from k in _keyMappings
                                where 
                                (k.KeyCode == e.KeyCode &&
                                k.IsAltPressed == e.Alt &&
@@ -143,7 +143,8 @@ namespace ConsoleControl
                                select k;
 
                 //  Go through each mapping, send the message.
-                foreach (var mapping in mappings)
+                var keyMappings = mappings as IList<KeyMapping> ?? mappings.ToList();
+                foreach (var mapping in keyMappings)
                 {
                     //SendKeysEx.SendKeys(CurrentProcessHwnd, mapping.SendKeysMapping);
                     //inputWriter.WriteLine(mapping.StreamMapping);
@@ -151,7 +152,7 @@ namespace ConsoleControl
                 }
 
                 //  If we handled a mapping, we're done here.
-                if (mappings.Any())
+                if (keyMappings.Any())
                 {
                     e.SuppressKeyPress = true;
                     return;
@@ -159,10 +160,10 @@ namespace ConsoleControl
             }
 
             //  If we're at the input point and it's backspace, bail.
-            if ((richTextBoxConsole.SelectionStart <= inputStart) && e.KeyCode == Keys.Back) e.SuppressKeyPress = true;
+            if ((richTextBoxConsole.SelectionStart <= _inputStart) && e.KeyCode == Keys.Back) e.SuppressKeyPress = true;
 
             //  Are we in the read-only zone?
-            if (richTextBoxConsole.SelectionStart < inputStart)
+            if (richTextBoxConsole.SelectionStart < _inputStart)
             {
                 //  Allow arrows and Ctrl-C.
                 if (!(e.KeyCode == Keys.Left ||
@@ -179,7 +180,7 @@ namespace ConsoleControl
             if (e.KeyCode == Keys.Return)
             {
                 //  Get the input.
-                string input = richTextBoxConsole.Text.Substring(inputStart, (richTextBoxConsole.SelectionStart) - inputStart);
+                string input = richTextBoxConsole.Text.Substring(_inputStart, (richTextBoxConsole.SelectionStart) - _inputStart);
 
                 //  Write the input (without echoing).
                 WriteInput(input, Color.White, false);
@@ -193,11 +194,11 @@ namespace ConsoleControl
         /// <param name="color">The color.</param>
         public void WriteOutput(string output, Color color)
         {
-            if (string.IsNullOrEmpty(lastInput) == false && 
-                (output == lastInput || output.Replace("\r\n", "") == lastInput))
+            if (string.IsNullOrEmpty(_lastInput) == false && 
+                (output == _lastInput || output.Replace("\r\n", "") == _lastInput))
                 return;
                 
-            if (!this.IsHandleCreated)
+            if (!IsHandleCreated)
                 return;
 
             Invoke((Action)(() =>
@@ -205,7 +206,7 @@ namespace ConsoleControl
                 //  Write the output.
                 richTextBoxConsole.SelectionColor = color;
                 richTextBoxConsole.SelectedText += output;
-                inputStart = richTextBoxConsole.SelectionStart;
+                _inputStart = richTextBoxConsole.SelectionStart;
             }));
         }
 
@@ -215,7 +216,7 @@ namespace ConsoleControl
         public void ClearOutput()
         {
             richTextBoxConsole.Clear();
-            inputStart = 0;
+            _inputStart = 0;
         }
 
         /// <summary>
@@ -233,13 +234,13 @@ namespace ConsoleControl
                 {
                     richTextBoxConsole.SelectionColor = color;
                     richTextBoxConsole.SelectedText += input;
-                    inputStart = richTextBoxConsole.SelectionStart;
+                    _inputStart = richTextBoxConsole.SelectionStart;
                 }
 
-                lastInput = input;
+                _lastInput = input;
 
                 //  Write the input.
-                processInterace.WriteInput(input);
+                _processInterace.WriteInput(input);
 
                 //  Fire the event.
                 FireConsoleInputEvent(input);
@@ -266,7 +267,7 @@ namespace ConsoleControl
             }
 
             //  Start the process.
-            processInterace.StartProcess(fileName, arguments);
+            _processInterace.StartProcess(fileName, arguments);
 
             //  If we enable input, make the control not read only.
             if (IsInputEnabled)
@@ -279,7 +280,7 @@ namespace ConsoleControl
         public void StopProcess()
         {
             //  Stop the interface.
-            processInterace.StopProcess();
+            _processInterace.StopProcess();
         }
         
         /// <summary>
@@ -290,8 +291,7 @@ namespace ConsoleControl
         {
             //  Get the event.
             var theEvent = OnConsoleOutput;
-            if (theEvent != null)
-                theEvent(this, new ConsoleEventArgs(content));
+            theEvent?.Invoke(this, new ConsoleEventArgs(content));
         }
 
         /// <summary>
@@ -309,27 +309,27 @@ namespace ConsoleControl
         /// <summary>
         /// The internal process interface used to interface with the process.
         /// </summary>
-        private readonly ProcessInterface processInterace = new ProcessInterface();
+        private readonly ProcessInterface _processInterace = new ProcessInterface();
         
         /// <summary>
         /// Current position that input starts at.
         /// </summary>
-        int inputStart = -1;
+        int _inputStart = -1;
 
         /// <summary>
         /// The is input enabled flag.
         /// </summary>
-        private bool isInputEnabled = true;
+        private bool _isInputEnabled = true;
 
         /// <summary>
         /// The last input string (used so that we can make sure we don't echo input twice).
         /// </summary>
-        private string lastInput;
+        private string _lastInput;
 
         /// <summary>
         /// The key mappings.
         /// </summary>
-        private List<KeyMapping> keyMappings = new List<KeyMapping>();
+        private readonly List<KeyMapping> _keyMappings = new List<KeyMapping>();
 
         /// <summary>
         /// Occurs when console output is produced.
@@ -363,10 +363,10 @@ namespace ConsoleControl
         [Category("Console Control"), Description("If true, the user can key in input.")]
         public bool IsInputEnabled
         {
-            get { return isInputEnabled; }
+            get { return _isInputEnabled; }
             set
             {
-                isInputEnabled = value;
+                _isInputEnabled = value;
                 if (IsProcessRunning)
                     richTextBoxConsole.ReadOnly = !value;
             }
@@ -392,37 +392,25 @@ namespace ConsoleControl
         /// 	<c>true</c> if this instance is process running; otherwise, <c>false</c>.
         /// </value>
         [Browsable(false)]
-        public bool IsProcessRunning
-        {
-            get { return processInterace.IsProcessRunning; }
-        }
+        public bool IsProcessRunning => _processInterace.IsProcessRunning;
 
         /// <summary>
         /// Gets the internal rich text box.
         /// </summary>
         [Browsable(false)]
-        public RichTextBox InternalRichTextBox
-        {
-            get { return richTextBoxConsole; }
-        }
+        public RichTextBox InternalRichTextBox => richTextBoxConsole;
 
         /// <summary>
         /// Gets the process interface.
         /// </summary>
         [Browsable(false)]
-        public ConsoleControlAPI.ProcessInterface ProcessInterface
-        {
-            get { return processInterace; }
-        }
+        public ProcessInterface ProcessInterface => _processInterace;
 
         /// <summary>
         /// Gets the key mappings.
         /// </summary>
         [Browsable(false)]
-        public List<KeyMapping> KeyMappings
-        {
-            get { return keyMappings; }
-        }
+        public List<KeyMapping> KeyMappings => _keyMappings;
 
         /// <summary>
         /// Gets or sets the font of the text displayed by the control.

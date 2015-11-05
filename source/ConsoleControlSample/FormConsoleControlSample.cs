@@ -30,7 +30,7 @@ namespace ConsoleControlSample
         private void FormConsoleControlSample_Load(object sender, EventArgs e)
         {
             //  Update the UI state.
-            UpdateUIState();
+            UpdateUiState();
         }
 
         /// <summary>
@@ -50,7 +50,7 @@ namespace ConsoleControlSample
                 consoleControl.StartProcess(formNewProcess.FileName, formNewProcess.Arguments);
 
                 //  Update the UI state.
-                UpdateUIState();
+                UpdateUiState();
             }
         }
 
@@ -64,13 +64,13 @@ namespace ConsoleControlSample
             consoleControl.StopProcess();
 
             //  Update the UI state.
-            UpdateUIState();
+            UpdateUiState();
         }
 
         /// <summary>
         /// Updates the state of the UI.
         /// </summary>
-        private void UpdateUIState()
+        private void UpdateUiState()
         {
             //  Update the state.
             if (consoleControl.IsProcessRunning)
@@ -95,7 +95,7 @@ namespace ConsoleControlSample
         private void toolStripButtonShowDiagnostics_Click(object sender, EventArgs e)
         {
             consoleControl.ShowDiagnostics = !consoleControl.ShowDiagnostics;
-            UpdateUIState();
+            UpdateUiState();
         }
 
         /// <summary>
@@ -105,7 +105,7 @@ namespace ConsoleControlSample
         /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
         private void timerUpdateUI_Tick(object sender, EventArgs e)
         {
-            UpdateUIState();
+            UpdateUiState();
         }
 
         /// <summary>
@@ -116,7 +116,7 @@ namespace ConsoleControlSample
         private void toolStripButtonInputEnabled_Click(object sender, EventArgs e)
         {
             consoleControl.IsInputEnabled = !consoleControl.IsInputEnabled;
-            UpdateUIState();
+            UpdateUiState();
         }
 
         /// <summary>
@@ -127,7 +127,7 @@ namespace ConsoleControlSample
         private void toolStripButtonRunCMD_Click(object sender, EventArgs e)
         {
             consoleControl.StartProcess("cmd", null);
-            UpdateUIState();
+            UpdateUiState();
         }
 
         /// <summary>
@@ -138,7 +138,7 @@ namespace ConsoleControlSample
         private void toolStripButtonSendKeyboardCommandsToProcess_Click(object sender, EventArgs e)
         {
             consoleControl.SendKeyboardCommandsToProcess = !consoleControl.SendKeyboardCommandsToProcess;
-            UpdateUIState();
+            UpdateUiState();
         }
 
         /// <summary>

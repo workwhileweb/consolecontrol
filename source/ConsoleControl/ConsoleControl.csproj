@@ -80,6 +80,9 @@
     <Compile Include="..\SharedAssemblyInfo.cs">
       <Link>Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="Api\Imports.cs" />
+    <Compile Include="Api\ProcessEventArgs.cs" />
+    <Compile Include="Api\ProcessInterface.cs" />
     <Compile Include="ConsoleControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -115,12 +118,6 @@
       <ProductName>Windows Installer 3.1</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\ConsoleControlAPI\ConsoleControlAPI.csproj">
-      <Project>{a4b8573f-ebfc-4140-b8aa-7c037919ef57}</Project>
-      <Name>ConsoleControlAPI</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="ConsoleControl.snk" />

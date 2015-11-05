@@ -29,7 +29,7 @@ namespace ConsoleControl
         /// <summary>
         ///     The internal process interface used to interface with the process.
         /// </summary>
-        private readonly ProcessInterface _processInterace = new ProcessInterface();
+        private readonly ProcessInterface _processInteface = new ProcessInterface();
 
         /// <summary>
         ///     Current position that input starts at.
@@ -67,10 +67,10 @@ namespace ConsoleControl
             InitialiseKeyMappings();
 
             //  Handle process events.
-            _processInterace.OnProcessOutput += processInterace_OnProcessOutput;
-            _processInterace.OnProcessError += processInterace_OnProcessError;
-            _processInterace.OnProcessInput += processInterace_OnProcessInput;
-            _processInterace.OnProcessExit += processInterace_OnProcessExit;
+            _processInteface.OnProcessOutput += processInterace_OnProcessOutput;
+            _processInteface.OnProcessError += processInterace_OnProcessError;
+            _processInteface.OnProcessInput += processInterace_OnProcessInput;
+            _processInteface.OnProcessExit += processInterace_OnProcessExit;
 
             //  Wait for key down messages on the rich text box.
             InternalRichTextBox.KeyDown += richTextBoxConsole_KeyDown;
@@ -120,7 +120,7 @@ namespace ConsoleControl
         ///     <c>true</c> if this instance is process running; otherwise, <c>false</c>.
         /// </value>
         [Browsable(false)]
-        public bool IsProcessRunning => _processInterace.IsProcessRunning;
+        public bool IsProcessRunning => _processInteface.IsProcessRunning;
 
         /// <summary>
         ///     Gets the internal rich text box.
@@ -132,7 +132,7 @@ namespace ConsoleControl
         ///     Gets the process interface.
         /// </summary>
         [Browsable(false)]
-        public ProcessInterface ProcessInterface => _processInterace;
+        public ProcessInterface ProcessInterface => _processInteface;
 
         /// <summary>
         ///     Gets the key mappings.
@@ -255,7 +255,7 @@ namespace ConsoleControl
             //  Are we showing diagnostics?
             if (ShowDiagnostics)
             {
-                WriteOutput(Environment.NewLine + _processInterace.ProcessFileName + " exited.",
+                WriteOutput(Environment.NewLine + _processInteface.ProcessFileName + " exited.",
                     Color.FromArgb(255, 0, 255, 0));
             }
 
@@ -302,7 +302,7 @@ namespace ConsoleControl
                 {
                     //SendKeysEx.SendKeys(CurrentProcessHwnd, mapping.SendKeysMapping);
                     //inputWriter.WriteLine(mapping.StreamMapping);
-//WriteInput("\x3", Color.White, false);
+                    //WriteInput("\x3", Color.White, false);
                 }
 
                 //  If we handled a mapping, we're done here.
@@ -332,15 +332,13 @@ namespace ConsoleControl
             }
 
             //  Is it the return key?
-            if (e.KeyCode == Keys.Return)
-            {
-                //  Get the input.
-                var input = InternalRichTextBox.Text.Substring(_inputStart,
-                    (InternalRichTextBox.SelectionStart) - _inputStart);
+            if (e.KeyCode != Keys.Return) return;
+            //  Get the input.
+            var input = InternalRichTextBox.Text.Substring(_inputStart,
+                (InternalRichTextBox.SelectionStart) - _inputStart);
 
-                //  Write the input (without echoing).
-                WriteInput(input, Color.White, false);
-            }
+            //  Write the input (without echoing).
+            WriteInput(input, Color.White, false);
         }
 
         /// <summary>
@@ -396,7 +394,7 @@ namespace ConsoleControl
                 _lastInput = input;
 
                 //  Write the input.
-                _processInterace.WriteInput(input);
+                _processInteface.WriteInput(input);
 
                 //  Fire the event.
                 FireConsoleInputEvent(input);
@@ -423,7 +421,7 @@ namespace ConsoleControl
             }
 
             //  Start the process.
-            _processInterace.StartProcess(fileName, arguments);
+            _processInteface.StartProcess(fileName, arguments);
 
             //  If we enable input, make the control not read only.
             if (IsInputEnabled)
@@ -436,7 +434,7 @@ namespace ConsoleControl
         public void StopProcess()
         {
             //  Stop the interface.
-            _processInterace.StopProcess();
+            _processInteface.StopProcess();
         }
 
         /// <summary>
@@ -458,8 +456,7 @@ namespace ConsoleControl
         {
             //  Get the event.
             var theEvent = OnConsoleInput;
-            if (theEvent != null)
-                theEvent(this, new ConsoleEventArgs(content));
+            theEvent?.Invoke(this, new ConsoleEventArgs(content));
         }
 
         /// <summary>
